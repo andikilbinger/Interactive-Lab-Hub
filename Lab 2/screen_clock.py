@@ -62,9 +62,16 @@ backlight.value = True
 
 while True:
     # Draw a black filled box to clear the image.
-    draw.rectangle((0, 0, width, height), outline=0, fill=400)
+    draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
 
-    #TODO: Lab 2 part D work should be filled in here. You should be able to look in cli_clock.py and stats.py 
+    # Part D: the date and time, using strftime from cli_clock.py and the
+    # draw.text call from stats.py. Each line is centered on the canvas.
+    date_str = time.strftime("%m/%d/%Y")
+    time_str = time.strftime("%H:%M:%S")
+
+    for line, y, color in ((date_str, 40, "#FFFFFF"), (time_str, 68, "#00FF00")):
+        line_width = draw.textbbox((0, 0), line, font=font)[2]
+        draw.text(((width - line_width) / 2, y), line, font=font, fill=color)
 
     # Display image.
     disp.image(image, rotation)
