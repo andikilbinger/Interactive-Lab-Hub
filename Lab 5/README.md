@@ -1,10 +1,12 @@
 # Observant Systems: Overnight Sensation
 
-**Team:** solo  
-**Members:** Andreas Kilbinger (andikilbinger)  
+**Team:** Andreas Kilbinger and Rohil Saraf  
+**Members:** Andreas Kilbinger (andikilbinger), [Rohil Saraf](https://github.com/rohilsaraf97) (rohilsaraf97)  
 **Project name:** Dish Shame
 
-**Collaboration and help:** I did this lab on my own. The starter code (`yolo_to_qwen.py`, `overnight.py`, `morning.py` and the other Part 1 scripts) is from the class repo. I used Claude (an AI assistant) to help me write the Dish Shame code (`dish_*.py`, `setup_pi.sh`, `start_night.sh`, `install_service.sh`), to debug the Pi setup, and to help write up this README. The screen code is based on Lab 2's `screen_clock.py`, the button on Lab 4's `qwiic_1_button.py`, and the voice on Piper from Lab 3.
+**Who did what:** I (Andreas) built the Dish Shame code, set up the Pi and ran the overnight test at home. <!-- TODO: add what Rohil did -->
+
+**Collaboration and help:** The starter code (`yolo_to_qwen.py`, `overnight.py`, `morning.py` and the other Part 1 scripts) is from the class repo. I used Claude (an AI assistant) to help me write the Dish Shame code (`dish_*.py`, `setup_pi.sh`, `start_night.sh`, `install_service.sh`), to debug the Pi setup, and to help write up this README. The screen code is based on Lab 2's `screen_clock.py`, the button on Lab 4's `qwiic_1_button.py`, and the voice on Piper from Lab 3.
 
 ---
 
@@ -92,9 +94,13 @@ The whole thing is one button. When the Pi is on, the screen says **"Goodnight? 
 
 When you press it, it takes 5 photos and counts the dishes. If the counter isn't clean it says so ("Not clean! I see 2 cups") and you can clean up and press again, or wait 20 seconds and it starts anyway. Then it says "Goodnight. I'm keeping an eye on the counter.", the button light goes dim and the screen turns off. That's the hand-off, about 30 seconds.
 
-<!-- TODO (you): photo or video of the bedtime press -> media/bedtime.jpg -->
+What the screen showed at bedtime, in order:
 
-![bedtime](media/bedtime.jpg)
+| 1. Waiting | 2. After pressing | 3. Night starts |
+|---|---|---|
+| ![goodnight](media/bedtime_1_goodnight.jpg) | ![checking](media/bedtime_2_checking.jpg) | ![watching](media/bedtime_3_watching.jpg) |
+
+The first screen says "IP no network". At home the Pi has no Wi-Fi, which is fine because everything runs offline. But I noticed the IP only gets checked once when the program starts, so on campus it could also say "no network" if the Wi-Fi connects a few seconds later. I changed it so the IP on that screen updates every few seconds.
 
 ## Part H. The observant system at night
 
@@ -137,9 +143,11 @@ Press the button again in the morning. The screen says "Good morning", then show
 
 <!-- TODO (Claude): the real morning report from tonight -->
 
-<!-- TODO (you): photo or video of the morning report -> media/morning.jpg -->
+The screen the next morning:
 
-![morning report](media/morning.jpg)
+<img src="media/morning.jpg" width="400" alt="morning report: All clean!">
+
+<!-- TODO (Claude + you): say whether the sink really was clean, or whether it missed dishes (check the night log) -->
 
 ### What worked and what didn't
 
