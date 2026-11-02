@@ -120,9 +120,11 @@ What the sink looks like empty (what I want at bedtime) and with dishes in it (w
 |---|---|
 | ![sink empty](media/sink_empty.jpg) | ![sink with dishes](media/sink_dishes.jpg) |
 
-<!-- TODO (you): photo of the whole setup (Pi + webcam above the sink) -> media/setup.jpg -->
+The setup at home: the Pi sits in a bowl on the shelf above the sink (away from the water), and the webcam is clipped to the edge of the shelf, looking down into the sink.
 
-![setup](media/setup.jpg)
+| From the front | From above |
+|---|---|
+| ![setup](media/setup.jpg) | ![setup from above](media/setup_top.jpg) |
 
 ## Part I. The interaction when awake
 
@@ -153,7 +155,7 @@ Press the button again in the morning. The screen says "Good morning", then show
 
 **Video:** 
 
-- **Looks like:** <!-- the Pi, webcam on the counter, screen, button -->
+- **Looks like:** the Pi with its little screen in a bowl on the shelf above the sink, the webcam clipped to the shelf edge looking down, and the button next to it. At night the screen is dark and only flashes a photo once a minute.
 - **Works like:** webcam → YOLO → interpreter (dish counts) → night log → Python facts + Qwen joke → screen + voice.
 - **Acts like:** press at bedtime, forget about it, press in the morning and get shamed (or praised).
 
