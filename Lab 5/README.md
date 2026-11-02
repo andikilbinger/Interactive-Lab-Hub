@@ -1,7 +1,7 @@
 # Observant Systems: Overnight Sensation
 
 **Team:** Andreas Kilbinger and Rohil Saraf  
-**Members:** Andreas Kilbinger (andikilbinger), [Rohil Saraf](https://github.com/rohilsaraf97) (rohilsaraf97)  
+**Members:** Andreas Kilbinger (awk84, andikilbinger), [Rohil Saraf](https://github.com/rohilsaraf97) (rs2685, rohilsaraf97)  
 **Project name:** Dish Shame
 
 **Who did what:** I (Andreas) built the Dish Shame code, set up the Pi and ran the overnight test at home. <!-- TODO: add what Rohil did -->
