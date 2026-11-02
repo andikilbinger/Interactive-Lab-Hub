@@ -6,7 +6,7 @@
 
 **Project name:** Door Watch
 
-**Acknowledgements:** I used Claude to help me set up VNC, fix the locale error, troubleshoot the git merge, write and debug the Door Watch scripts (`door_watch.py`, `door_morning.py`, `pitft.py`), and draft and edit the English in this write-up.
+**Acknowledgements:** I used Claude (Anthropic) to help me set up VNC, fix the locale error, troubleshoot the git merge, write and debug the Door Watch scripts (`door_watch.py`, `door_morning.py`, `pitft.py`), and draft and edit the English in this write-up.
 
 ---
 
@@ -247,7 +247,7 @@ House rules: sample rather than stream (one look every 5 to 30 seconds), and kee
 3. **Door Watch (chosen).** The Pi sits by a front door all night and notes when someone comes close, how long they stay, and takes one photo if they stay. In the morning it tells you who stopped by while you were asleep. This one uses the whole Part E pipeline (camera, YOLO, `interpret()`, a log, Qwen), and the camera points at a door, not a bed.  
 <img src="images/Door_watch_and_Night_palette.jpg" width="500">
 
-**Where it runs.** My classmate lives alone in a studio, so the device watches the hallway outside her door. She knows about it and agreed. The camera faces the door and the space in front of it.  
+**Where it runs.** My classmate lives alone in a studio, so the device watches the hallway outside her door. She knows about it and agreed. The camera faces the door and the space in front of it. For the real night, I ran it in my own kitchen instead (see Part H).
 
 <img src="images/door_setup.png" alt="Door Watch set up outside the door" width="300">
 
@@ -284,10 +284,13 @@ Feedback from Rohil Saraf (rs2685): The main concern with the original idea is t
 
 Feedback from Jason Sebastian (js3685): It isn't clear why the person is angry at Slide 5. Also confused about the quiet coyote gesture because Slide 1 makes it look like the user pressed a switch to start the device. They were also wondering if the device uploads photo via WiFi.
 
-<!-- Who gave feedback and what they said, e.g.
-- "What happens when nobody comes? Is a blank report useful?"
-- "Will the Pi count you when you walk up to it in the morning?" (this one turned out to be true, see Part H)
--->
+Both of them were confused by the same few things, and each one led to a change in the revised storyboard below:
+
+* **It wasn't clear that the device takes a photo.** In the revised version, panel 4 says "CLICK!" and the visitor reacts to it.
+* **It looked like the photo was uploaded to the cloud and viewed on a computer.** Now the report and the photo appear on the device itself, and nothing leaves the Pi.
+* **It looked like the user pressed a switch to start it.** Now panel 1 shows the Quiet Coyote gesture.
+* **It wasn't clear why she was angry at the end.** We removed that panel. The story ends when she reads the report.
+* **What if someone only walks past?** The device only takes a photo when someone stays for 10 seconds or more, so people passing by aren't photographed.
 
 ***Post your revised storyboard here.***
 
@@ -298,7 +301,7 @@ Feedback from Jason Sebastian (js3685): It isn't clear why the person is angry a
 3. **3 AM.** A stranger in a mask stops at her door and looks around.
 4. **3 AM. CLICK!** The stranger has stayed longer than 10 seconds, so the device takes one photo. He notices and is startled.
 5. **3 AM.** He sits down outside the door. She keeps sleeping. The device logs how long he stays, but it doesn't wake her up.
-6. **7 AM.** She presses A on the device, and the screen reads "1 visit at 3 AM" with the stranger's photo. "OMG!"
+6. **7 AM.** She presses A on the device, and the screen reads "1 visit at 3 AM" with his photo. "OMG!"
 
 **What changed from the first storyboard**
 
@@ -394,9 +397,57 @@ During a fake night I stood in front of the door for longer than 10 seconds so t
 
 **A real night**
 
-_TBD_
+I ran Door Watch for one real night at home, from 01:25 to 09:31 on November 1. I set it up in our kitchen, and I armed it with the Quiet Coyote before going to bed. In the morning I pressed A to end the night.
+<img src="images/night_report_real.png" alt="Timeline report" width="700">
 
-<!-- Paste night_log.txt from the real night and a photo of the setup at the door. -->
+
+
+```
+01:25:14 armed, one look every 5s
+01:25:19 someone arrived (0.92)
+01:25:19 left after 0s
+...
+01:58:38 someone arrived (0.80)
+01:58:48 still here after 10s, took snapshots/20261101_015848.jpg
+01:59:18 left after 40s
+01:59:33 someone arrived (0.86)
+01:59:43 still here after 10s, took snapshots/20261101_015943.jpg
+01:04:40 left after -3293s
+01:04:55 someone arrived (0.86)
+01:04:55 left after 0s
+01:25:21 someone arrived (0.86)
+...
+01:37:24 someone arrived (0.87)
+01:37:34 still here after 10s, took snapshots/20261101_013734.jpg
+01:41:30 left after 246s
+07:27:55 someone arrived (0.61)
+07:27:55 left after 0s
+07:28:10 someone arrived (0.63)
+07:28:10 left after 0s
+08:37:59 someone arrived (0.84)
+...
+09:24:10 left after 15s
+09:31:03 someone arrived (0.89)
+09:31:07 ignored the last few seconds: that was you pressing A
+09:31:07 stopped by button A
+```
+
+The device logged 22 visits and took 16 photos. Here is what I learned from it.
+
+<img src="images/realnight_report.JPG" alt="The report on the screen in the morning" width="450">
+<img src="images/realnight_photo.JPG" alt="The snapshot of the visitor." width="450">
+
+**1. Almost every "visitor" was us.** The kitchen turned out to be the busiest spot in the apartment at night. My roommate and I kept getting up for water, so most of the 22 visits are the two of us. The first ones at 01:25 are me, still in front of the camera after making the gesture. This is the same problem I found when I pressed A during testing: YOLO only knows that someone is there, not who it is. For a real door watch, the camera has to face a door that only visitors use. A spot that the people who live there walk past all night makes the log useless as a security record.
+
+**2. The clocks went back in the middle of the night.** Daylight saving time ended at 2:00 a.m. on November 1, and the clock went back to 1:00. So the hour from 1:00 to 2:00 happened twice. My script logged plain local times, so when someone arrived at 01:59:33 (daylight time) and left at 01:04:40 (standard time), it calculated that they stayed **−3293 seconds**. Everything from `01:04:40` to `01:41:30` in the log is the second 1 a.m., even though it looks like it happened before 01:59. The night also looked one hour shorter than it really was (8 hours instead of 9).
+
+This changed the morning report. When I pressed A, the PiTFT showed **"22 visits, longest 4m06s at 01:37."** The broken visit couldn't be the longest, because its stay was negative, so the script counted it as someone who just passed by. In reality, the 01:59 visit was the longest, at about 5 minutes. A short fake night could never have shown this bug. I only found it because I ran a real night, and it happened to be the one night of the year when 1 a.m. comes twice.
+
+I decided to leave the code as it is and keep this night's log as a record of the bug. If I fixed it, the fix would be to save every time with its UTC offset (for example `01:59:33-04:00` and `01:04:40-05:00`), or as a timestamp that doesn't depend on the local clock at all. Then the stay would come out as 5m07s, and the timeline would show the full 9 hours. It's a good reminder that "how long did they stay" is a harder question than it looks, because the wall clock isn't always a straight line.
+
+**3. Two detections right at the threshold.** At 07:27 and 07:28 there were two one-look visits at 0.61 and 0.63 confidence, just above my 0.6 threshold. They didn't last long enough to get a photo, so I can't say for sure what they were. They happened around sunrise, so the changing light may have made something look like a person. This is the trade-off I noted in Part B: a higher threshold would drop these, but it might also miss real people.
+
+**4. The morning hand-off worked.** At 09:31 I walked up and pressed A. The script saw me at 09:31:03 and dropped that visit (`ignored the last few seconds: that was you pressing A`), then showed the report on the PiTFT.
 
 ## Part I. Design the interaction after
 
