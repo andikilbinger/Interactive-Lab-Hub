@@ -172,13 +172,24 @@ Two Pis with APDS-9960 sensors publish their colors to the shared grid. The same
 
 ### Our Project: Gossiping Pis
 
-Three Pis gossip with each other over MQTT. Swiping over a sensor starts a rumor, and the rumor spreads from Pi to Pi. If someone leans in to eavesdrop, the whole group goes quiet and makes small talk until the person backs off. Code: [`gossip.py`](gossip.py).
+Three Pis gossip with each other over MQTT. Every Pi has a VCNL4040 proximity sensor, and how long something stays close decides what happens:
 
-| Pi | Role | Sensor input | Run with |
+- **Quick tap** (hand in and out in under 1.5 s): the Pi starts a new rumor, which spreads from Pi to Pi.
+- **Something stays close** (1.5 s or more): an eavesdropper! That Pi hisses "shh, someone's listening", and the whole group makes small talk until the person backs off.
+
+Each Pi shows what it's saying on its screen, and says it out loud too if it has a speaker.
+
+**Where rumors come from:** each tap first uses a rumor from a list we wrote (`STARTER_RUMORS` in `gossip.py`). Once a Pi has heard all of those, the next tap asks the Qwen model running on that Pi (through Ollama) to make up a new one. The screen shows "ooh wait, I'm hearing something..." while it thinks. Taps during that time are ignored. If Ollama isn't running, the Pi says it's run out of gossip. You can also type a rumor and press Enter at any time.
+
+Code: [`gossip.py`](gossip.py).
+
+| Pi | Name | Voice | Sensor |
 |---|---|---|---|
-| Edmond | Gossiper | APDS-9960 gesture: swipe to start a rumor | `--apds` |
-| Jacey | Gossiper | APDS-9960 gesture: swipe to start a rumor | `--apds` |
-| Gabi | Lookout | VCNL4040 proximity: someone leaning in hushes the group | `--vcnl --speak` |
+| Edmond | `pi-edmond` | `en+m2` | VCNL4040 |
+| Jacey | `pi-jacey` | `en+f2` | VCNL4040 |
+| Gabi | `pi-gabi` | `en+f3` | VCNL4040 |
+
+All three Pis run the same code and follow the same steps. Only the name and voice are different.
 
 **MQTT topics** (all under `IDD/mamaya/gossip/`, published automatically by `gossip.py`):
 
@@ -186,32 +197,65 @@ Three Pis gossip with each other over MQTT. Swiping over a sensor starts a rumor
 |---|---|---|
 | `hello/<pi>` | `{"known": [rumor ids], "hush": bool}` | Every 2 seconds, listing the rumors this Pi knows |
 | `rumor/<to-pi>` | `{"from", "rid", "text", "origin"}` | When a hello shows another Pi is missing a rumor |
-| `hush/<pi>` | `1` / `0` | When the VCNL4040 sees someone lean in, and again when they leave |
+| `hush/<pi>` | `1` / `0` | When a Pi's VCNL4040 sees someone stay close, and again when they leave |
 | `bye/<pi>` | empty | Sent by the broker (MQTT "last will") if a Pi drops off |
 
-**Setup on each Pi** (inside the Lab 6 venv from Part B):
+#### What each Pi must do
+
+**1. Hardware**
+- With the Pi powered off, plug the VCNL4040 into the Pi with a Qwiic cable.
+- Power on the Pi and check that it sees the sensor. `60` should appear in the grid:
+  ```bash
+  i2cdetect -y 1
+  ```
+  If nothing shows up, turn on I2C: `sudo raspi-config` → Interface Options → I2C → Yes, then reboot.
+- Free up the screen so `gossip.py` can draw on it (same as Part B):
+  ```bash
+  sudo systemctl stop piscreen.service
+  ```
+- Optional: if your Pi has a speaker, plug it in and test it:
+  ```bash
+  sudo apt install -y espeak-ng
+  espeak-ng "hello"
+  ```
+
+**2. Software** (inside the Lab 6 venv from Part B)
 ```bash
 cd "Lab 6"
+git pull                                       # get the latest gossip.py
 source .venv/bin/activate
 pip install -r requirements-pi.txt
-sudo apt install -y espeak-ng                  # any Pi with a speaker
-pip install adafruit-circuitpython-vcnl4040    # Gabi's Pi only
+pip install adafruit-circuitpython-vcnl4040
 ```
-
-**Running it:**
+Check that Ollama has a Qwen model, which is used once the rumor list runs out:
 ```bash
-# Edmond and Jacey (gossipers): swipe over the APDS-9960 to start a rumor
-python gossip.py --apds
-
-# Gabi (lookout): find the threshold first, then run
-python gossip.py --calibrate
-python gossip.py --vcnl --speak --listen-threshold <number> --voice en+f3
+ollama list                    # should show e.g. qwen2.5:1.5b
 ```
+If your model has a different name, add `--ollama-model <name>` when you run `gossip.py`.
 
-- Add `--speak` on any Pi that has a speaker.
-- On any Pi, you can also type a line and press Enter to start a rumor.
-- Each Pi uses its hostname as its name. To set it yourself, use `--name pi-jacey`.
+**3. Calibrate your sensor.** Each sensor reads a little differently, so each person picks their own threshold:
+```bash
+python gossip.py --calibrate
+```
+Hold your hand about 5 cm from the sensor and note the number. Use a value a bit below it as your threshold. It should be well above the number you see when nothing is there. Press `Ctrl+C` to stop.
+
+**4. Run it** with your name, threshold and voice from the table above:
+```bash
+python gossip.py --name pi-edmond --listen-threshold <your number> --speak --voice en+m2
+```
+- Every line shows up on the Pi's screen. The top bar shows the Pi's name and how many friends are online, colored by mood: green = gossiping, gray = alone, red = someone's listening.
+- Leave out `--speak --voice ...` if your Pi has no speaker. The screen and terminal still show everything.
+- You can also type a line and press Enter to start your own rumor.
+
+**5. During the demo**
+- **Tap** your sensor quickly to start a rumor, then watch it travel to the other two Pis.
+- **Lean in or hold your hand over** any Pi's sensor for a couple of seconds to play the eavesdropper. All three Pis go quiet until you move away.
+- **Stop** one Pi with `Ctrl+C` or unplug it. The others say bye, and when it comes back, they catch it up on every rumor it missed.
+
+#### Notes
 - No hotspot is needed. Campus Wi‑Fi works because every Pi only connects to the broker.
+- To test without a sensor (e.g. on a laptop), run `python gossip.py --no-sensor --name test`.
+- `--no-ollama` makes a Pi use only the built-in rumor list.
 - Optional: `--ble` makes Pis gossip only when they're physically close, based on Bluetooth signal strength.
 - To watch the messages live, open `http://farlab.infosci.cornell.edu:5001` and filter by `IDD/mamaya/gossip`.
 
