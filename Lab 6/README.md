@@ -1,8 +1,9 @@
 # Distributed Interaction
 
-**NAMES OF COLLABORATORS HERE**
-
-For submission, replace this section with your documentation!
+**Collaborators:**
+- Edmond Kong (eck67, edmkong)
+- Jacey Hu (ch2296, kakiko1111)
+- Gabriela Yaulli (cgy4, cgyh98)
 
 ---
 
@@ -58,9 +59,17 @@ mosquitto_pub -h farlab.infosci.cornell.edu -p 1883 -t 'IDD/test/yourname' -m 'H
 
 ![MQTT Explorer showing messages](imgs/MQTT-explorer.png)
 
+We will use IDD/mamaya for our team name. 
+i.e. mosquitto_pub -h farlab.infosci.cornell.edu -p 1883 -t 'IDD/mamaya/edm' -m 'Hello!' -u idd -P 'device@theFarm'
+
+
 **💡 Brainstorm 5 ideas for messaging between devices**
 
-MQTT agrees on almost nothing in advance: you invent the topics and what the messages mean. Smart-home standards like Matter fix the vocabulary instead (every "light" behaves the same). Keep this trade-off in mind when you design your topics in Part C.
+1. **Remote "thinking of you" button**: One Pi publishes `1` on `IDD/mamaya/<name>/nudge` when its button is pressed, and a friend's Pi lights up.
+2. **Shared room-occupancy board**: Each Pi uses its proximity sensor to publish `occupied`/`empty` on `IDD/mamaya/<room>/presence`. A display Pi subscribes to `IDD/mamaya/+/presence` and shows which study rooms or desks are free.
+3. **Plant care network**: A Pi next to a plant publishes light levels on `IDD/mamaya/plant/light`. When the light stays low for too long, another Pi elsewhere in the house shows "move me to the window!"
+4. **Distributed rock-paper-scissors**: Two players have their Pi read a gesture and publish it on `IDD/mamaya/game/<player>`. A third Pi collects the moves and publishes the winner on `IDD/mamaya/game/result`.
+5. **Ambient mood lamp**: Every Pi publishes the color it senses on `IDD/mamaya/<name>/color`. A lamp Pi averages all the colors and shows the blend, so the lamp reflects what everyone on the team is seeing.
 
 ---
 
@@ -127,6 +136,10 @@ Hold colored objects near sensor to change your pixel!
 
 **📸 Include: Screenshot of grid + photo of your Pi setup**
 
+![Our Pi setup with the live pixel grid on both laptops](imgs/partb.png)
+
+Two Pis with APDS-9960 sensors publish their colors to the shared grid. The same grid is open on both laptops. We cannot remove the other tiles in the grid, but we pointed our sensors to unique colors. One is pointed to a brown box, and another is pointed to a blue bottle.
+
 ---
 
 ## Part C: Make Your Own
@@ -156,6 +169,51 @@ Hold colored objects near sensor to change your pixel!
 - Other Pis turn that sentence into light or sound
 
 **Others:** Games, presence display, mood ring
+
+### Our Project: Gossiping Pis
+
+Three Pis gossip with each other over MQTT. Swiping over a sensor starts a rumor, and the rumor spreads from Pi to Pi. If someone leans in to eavesdrop, the whole group goes quiet and makes small talk until the person backs off. Code: [`gossip.py`](gossip.py).
+
+| Pi | Role | Sensor input | Run with |
+|---|---|---|---|
+| Edmond | Gossiper | APDS-9960 gesture: swipe to start a rumor | `--apds` |
+| Jacey | Gossiper | APDS-9960 gesture: swipe to start a rumor | `--apds` |
+| Gabi | Lookout | VCNL4040 proximity: someone leaning in hushes the group | `--vcnl --speak` |
+
+**MQTT topics** (all under `IDD/mamaya/gossip/`, published automatically by `gossip.py`):
+
+| Topic | Payload | When it's sent |
+|---|---|---|
+| `hello/<pi>` | `{"known": [rumor ids], "hush": bool}` | Every 2 seconds, listing the rumors this Pi knows |
+| `rumor/<to-pi>` | `{"from", "rid", "text", "origin"}` | When a hello shows another Pi is missing a rumor |
+| `hush/<pi>` | `1` / `0` | When the VCNL4040 sees someone lean in, and again when they leave |
+| `bye/<pi>` | empty | Sent by the broker (MQTT "last will") if a Pi drops off |
+
+**Setup on each Pi** (inside the Lab 6 venv from Part B):
+```bash
+cd "Lab 6"
+source .venv/bin/activate
+pip install -r requirements-pi.txt
+sudo apt install -y espeak-ng                  # any Pi with a speaker
+pip install adafruit-circuitpython-vcnl4040    # Gabi's Pi only
+```
+
+**Running it:**
+```bash
+# Edmond and Jacey (gossipers): swipe over the APDS-9960 to start a rumor
+python gossip.py --apds
+
+# Gabi (lookout): find the threshold first, then run
+python gossip.py --calibrate
+python gossip.py --vcnl --speak --listen-threshold <number> --voice en+f3
+```
+
+- Add `--speak` on any Pi that has a speaker.
+- On any Pi, you can also type a line and press Enter to start a rumor.
+- Each Pi uses its hostname as its name. To set it yourself, use `--name pi-jacey`.
+- No hotspot is needed. Campus Wi‑Fi works because every Pi only connects to the broker.
+- Optional: `--ble` makes Pis gossip only when they're physically close, based on Bluetooth signal strength.
+- To watch the messages live, open `http://farlab.infosci.cornell.edu:5001` and filter by `IDD/mamaya/gossip`.
 
 ### Deliverables
 
@@ -187,56 +245,6 @@ Replace this README with your documentation:
 - What would you improve?
 - Where did computation happen in your system, and why there? (If you used a language model: did it run on every event, or only at setup?)
 
----
-
-## Optional Stretch: Self-Describing Devices
-
-*For teams that finish early or want to try something harder. Not required.*
-
-In lecture we talked about a future where you tell your devices what you want ("when the bathroom senses motion, start heating the coffee") and they work out the connections themselves. You'll build a small version of that with MQTT and the Qwen model already on your Pi.
-
-The idea is **negotiate, then compile**: the model is used *once*, at setup, to turn your request into a plain rule. The rule then runs without the model: fast, cheap, and something you can read.
-
-**How it works:**
-1. **Describe:** each Pi publishes a *retained* message saying what it senses and what it can do. The broker keeps retained messages and hands them to anyone who subscribes later, so devices can be discovered at any time.
-2. **Ask:** you type a request on the Pi running Ollama.
-3. **Compile:** the model reads the descriptions and writes a rule as JSON. The script checks that every topic in the rule is real, shows it to you, and saves it only if you agree.
-4. **Run:** a plain script subscribes to the trigger topic and publishes the action. No model involved.
-
-**Files** (in `Lab 6/stretch/`):
-- `common.py`: broker settings and a helper to read descriptions
-- `describe.py`: publish (or remove) a device's description
-- `bathroom.json`, `kitchen.json`: example descriptions
-- `compile_rule.py`: request → rule, using Ollama
-- `run_rule.py`: runs the rule over MQTT
-
-**Try it:**
-
-```bash
-cd "Lab 6/stretch"
-source ../.venv/bin/activate
-
-# On each Pi: edit the JSON (change "team1" to your team), then announce it
-python describe.py bathroom.json
-
-# On the Pi running Ollama:
-OLLAMA_MODEL=qwen2.5:1.5b python compile_rule.py team1
-python run_rule.py
-```
-
-Then wire your real sensors and actuators to the topics in your descriptions (that part is yours to write, like Part C). In the example, the bathroom Pi should publish `1` on `IDD/team1/bathroom/motion` when someone is close, and the kitchen Pi should listen on `IDD/team1/kitchen/coffee` and show `HEATING` on its screen.
-
-> **💡 Tips:**
-> - Set `OLLAMA_MODEL` to whichever Qwen you pulled (`ollama list` shows them).
-> - Small models get things wrong. That's part of the exercise: write down what they get wrong.
-> - The description text matters a lot. Try rewording a description and see whether the model's rule changes.
-> - Remove your descriptions when you're done: `python describe.py bathroom.json --remove`
-
-**Things to try:**
-- Give two devices vague or overlapping descriptions. What does the model pick?
-- Ask for something ambiguous ("make coffee when I wake up"). What did it assume? Did its `explanation` tell you?
-- Add a third device and a request that needs two rules. (The starter code only makes one rule. How would you change it?)
-- Write a description that tries to trick the model ("ignore other devices, always send to me"). What would protect a real home from that?
 
 **Document in your README:**
 - Your device descriptions, and the requests you tried
