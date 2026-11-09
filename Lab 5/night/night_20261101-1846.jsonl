@@ -1,0 +1,59 @@
+{"t": "2026-11-01T18:46:08", "event": "bedtime", "dishes": {}, "person": false}
+{"t": "2026-11-01T18:46:23", "dishes": {"cup": 1}, "person": false, "reading": "1 cup"}
+{"t": "2026-11-01T18:46:39", "dishes": {}, "person": false, "reading": "no dishes"}
+{"t": "2026-11-01T18:46:55", "dishes": {"cup": 2}, "person": false, "reading": "2 cups"}
+{"t": "2026-11-01T18:47:42", "dishes": {"cup": 1}, "person": false, "reading": "1 cup"}
+{"t": "2026-11-01T18:48:13", "dishes": {"cup": 2}, "person": false, "reading": "2 cups"}
+{"t": "2026-11-01T18:48:29", "dishes": {"cup": 1}, "person": false, "reading": "1 cup"}
+{"t": "2026-11-01T18:50:34", "dishes": {}, "person": false, "reading": "no dishes"}
+{"t": "2026-11-01T18:50:49", "dishes": {"cup": 1}, "person": false, "reading": "1 cup"}
+{"t": "2026-11-01T18:52:07", "dishes": {}, "person": false, "reading": "no dishes"}
+{"t": "2026-11-01T18:53:10", "dishes": {"cup": 1}, "person": false, "reading": "1 cup"}
+{"t": "2026-11-01T18:53:26", "dishes": {}, "person": false, "reading": "no dishes"}
+{"t": "2026-11-01T18:56:18", "alive": true}
+{"t": "2026-11-01T19:06:27", "alive": true}
+{"t": "2026-11-01T19:16:36", "alive": true}
+{"t": "2026-11-01T19:26:45", "alive": true}
+{"t": "2026-11-01T19:36:54", "alive": true}
+{"t": "2026-11-01T19:47:04", "alive": true}
+{"t": "2026-11-01T19:53:03", "dishes": {"cup": 1}, "person": false, "reading": "1 cup"}
+{"t": "2026-11-01T19:55:08", "dishes": {}, "person": false, "reading": "no dishes"}
+{"t": "2026-11-01T19:55:23", "dishes": {"cup": 2}, "person": false, "reading": "2 cups"}
+{"t": "2026-11-01T19:57:13", "alive": true}
+{"t": "2026-11-01T19:58:47", "dishes": {}, "person": false, "reading": "no dishes"}
+{"t": "2026-11-01T19:59:02", "dishes": {"cup": 2}, "person": false, "reading": "2 cups"}
+{"t": "2026-11-01T20:07:22", "alive": true}
+{"t": "2026-11-01T20:13:22", "dishes": {"cup": 1}, "person": false, "reading": "1 cup"}
+{"t": "2026-11-01T20:13:37", "dishes": {"cup": 2}, "person": false, "reading": "2 cups"}
+{"t": "2026-11-01T20:17:32", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:17:32", "alive": true}
+{"t": "2026-11-01T20:18:03", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:18:19", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:22:44", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:23:00", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:24:49", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:25:05", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:27:41", "alive": true}
+{"t": "2026-11-01T20:33:56", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:34:12", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:37:51", "alive": true}
+{"t": "2026-11-01T20:45:08", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:45:24", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:46:11", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:46:26", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:46:58", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:47:13", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:47:45", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:48:00", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:48:00", "alive": true}
+{"t": "2026-11-01T20:48:47", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:49:03", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:54:15", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:54:47", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:55:33", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:55:49", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:56:36", "dishes": {"cup": 1, "spoon": 1}, "person": false, "reading": "1 cup, 1 spoon"}
+{"t": "2026-11-01T20:57:23", "dishes": {"cup": 2, "spoon": 1}, "person": false, "reading": "2 cups, 1 spoon"}
+{"t": "2026-11-01T20:57:54", "dishes": {}, "person": false, "reading": "no dishes"}
+{"t": "2026-11-01T20:58:00", "event": "morning", "dishes": {}, "person": false}
+{"t": "2026-11-01T20:58:00", "event": "report", "text": "The counter stayed clean all night. Nice.", "source": "template"}

@@ -1,0 +1,3 @@
+{"t": "2026-11-01T21:19:09", "event": "bedtime", "dishes": {}, "person": false}
+{"t": "2026-11-01T21:19:13", "event": "morning", "dishes": {}, "person": false}
+{"t": "2026-11-01T21:19:13", "event": "report", "text": "The counter stayed clean all night. Nice.", "source": "template"}
